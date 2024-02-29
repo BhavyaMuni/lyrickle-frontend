@@ -3,7 +3,9 @@
 </div>
 
 <script>
-  import Matter from "matter-js";
+  import "pathseg";
+  import decomp from "poly-decomp";
+  import Matter, { Common } from "matter-js";
   const {
     Engine,
     Render,
@@ -13,18 +15,20 @@
     Events,
     Mouse,
     MouseConstraint,
+    Svg,
   } = Matter;
 
   const engine = Engine.create({
     gravity: { x: 0, y: 0, scale: 0.0 },
   });
-
+  Common.setDecomp(decomp);
   const matterContainer = document.getElementById("matter-container");
   const matterCanvas = document.getElementById("matter-canvas");
   const render = Render.create({
     canvas: matterCanvas,
     engine: engine,
     options: {
+      wireframes: false,
       width: window.innerWidth,
       height: window.innerHeight,
       background: "transparent",
@@ -33,17 +37,27 @@
 
   var containerWidth = matterContainer!.clientWidth;
   var containerHeight = matterContainer!.clientHeight;
+
   const boxes = [];
-  for (let i = 0; i < 500; i++) {
+
+  for (let i = 0; i < 250; i++) {
     boxes.push(
       Bodies.rectangle(
         Math.random() * matterContainer!.clientWidth,
         Math.random() * matterContainer!.clientWidth,
-        20,
-        20,
+        containerHeight * 0.04,
+        containerHeight * 0.04,
         {
           render: {
-            fillStyle: "red",
+            sprite: {
+              xScale: containerHeight / 1000,
+              yScale: containerHeight / 1000,
+              texture: Matter.Common.choose([
+                "./svg/music-double-note.svg",
+                "./svg/music-note.svg",
+              ]),
+            },
+            opacity: 0.5,
           },
         }
       )
@@ -52,10 +66,10 @@
   //   const box = Bodies.rectangle(200, 200, 80, 80);
 
   const tbox = Bodies.rectangle(
-    matterContainer!.clientHeight / 2,
-    matterContainer!.clientWidth / 2,
-    matterContainer!.clientWidth * 0.6,
-    matterContainer!.clientHeight * 0.6,
+    containerWidth / 2,
+    containerHeight / 2,
+    containerWidth * 0.6,
+    containerHeight * 0.6,
     {
       render: {
         opacity: 0,
@@ -119,8 +133,6 @@
       y: 0,
     });
 
-    console.log(newContainerWidth / containerWidth);
-
     Matter.Body.scale(ground, newContainerWidth / containerWidth, 1);
     Matter.Body.scale(ceiling, newContainerWidth / containerWidth, 1);
 
@@ -167,7 +179,7 @@
 
       // Apply repulsion force when the mouse is near the box
       if (distance < 100) {
-        const repulsionMagnitude = 0.0001;
+        const repulsionMagnitude = 0.0005;
         const repulsionX = -distanceX * repulsionMagnitude;
         const repulsionY = -distanceY * repulsionMagnitude;
 
@@ -178,6 +190,6 @@
       }
     });
   });
-  Engine.run(engine);
+  Matter.Runner.run(engine);
   Render.run(render);
 </script>
