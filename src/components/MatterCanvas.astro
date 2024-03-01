@@ -1,5 +1,11 @@
-<div class="z-10 relative" id="matter-container">
-  <canvas class="w-full h-screen" id="matter-canvas"></canvas>
+<div
+  class="bg-transparent w-full h-screen overflow-hidden"
+  id="matter-container"
+>
+  <canvas
+    class="-z-10 min-w-full"
+    style="width: 1000px; height: 1000px;"
+    id="matter-canvas"></canvas>
 </div>
 
 <script>
@@ -19,60 +25,69 @@
   } = Matter;
 
   const engine = Engine.create({
-    gravity: { x: 0, y: 0, scale: 0.0 },
+    // gravity: { x: 0, y: 0, scale: 0. },
+    // enableSleeping: true,
   });
   Common.setDecomp(decomp);
   const matterContainer = document.getElementById("matter-container");
+  console.log(matterContainer!.clientWidth, matterContainer!.clientHeight);
   const matterCanvas = document.getElementById("matter-canvas");
+  var containerWidth = matterContainer!.clientWidth;
+  var containerHeight = matterContainer!.clientHeight;
   const render = Render.create({
     canvas: matterCanvas,
     engine: engine,
     options: {
+      pixelRatio: window.devicePixelRatio,
+      showSleeping: false,
       wireframes: false,
-      width: window.innerWidth,
-      height: window.innerHeight,
+      showDebug: true,
+      width: matterContainer.clientWidth,
+      height: matterContainer.clientHeight,
       background: "transparent",
+      wireframeBackground: "transparent",
     },
   });
-
-  var containerWidth = matterContainer!.clientWidth;
-  var containerHeight = matterContainer!.clientHeight;
 
   const boxes = [];
 
   for (let i = 0; i < 250; i++) {
-    boxes.push(
-      Bodies.rectangle(
-        Math.random() * matterContainer!.clientWidth,
-        Math.random() * matterContainer!.clientWidth,
-        containerHeight * 0.04,
-        containerHeight * 0.04,
-        {
-          render: {
-            sprite: {
-              xScale: containerHeight / 1000,
-              yScale: containerHeight / 1000,
-              texture: Matter.Common.choose([
-                "./svg/music-double-note.svg",
-                "./svg/music-note.svg",
-              ]),
-            },
-            opacity: 0.5,
+    const newBox = Bodies.rectangle(
+      Math.random() * containerWidth,
+      Math.random() * containerHeight,
+      containerHeight * 0.035,
+      containerHeight * 0.035,
+      {
+        render: {
+          sprite: {
+            xScale: containerHeight / 750,
+            yScale: containerHeight / 750,
+            texture: Matter.Common.choose([
+              "./svg/music-double-note.svg",
+              "./svg/music-note.svg",
+              "./svg/music-note-1.svg",
+              "./svg/music-note-2.svg",
+            ]),
           },
-        }
-      )
+          //   fillStyle: "#64748b",
+        },
+        friction: 0.1,
+      }
     );
+    Body.rotate(newBox, Math.random() * Math.PI);
+    boxes.push(newBox);
   }
   //   const box = Bodies.rectangle(200, 200, 80, 80);
 
   const tbox = Bodies.rectangle(
     containerWidth / 2,
-    containerHeight / 2,
+    containerHeight / 3 / 2,
     containerWidth * 0.6,
-    containerHeight * 0.6,
+    containerHeight * 1.2,
     {
       render: {
         opacity: 0,
+        fillStyle: "red",
       },
       isStatic: true,
     }
@@ -82,19 +97,19 @@
   const ground = Bodies.rectangle(
     containerWidth / 2,
     containerHeight,
-    containerWidth,
+    10000,
     50,
     {
       isStatic: true,
       render: { opacity: 0 },
     }
   );
-  const ceiling = Bodies.rectangle(containerWidth / 2, 0, containerWidth, 50, {
+  const ceiling = Bodies.rectangle(containerWidth / 2, 0, 10000, 50, {
     isStatic: true,
     render: { opacity: 0 },
   });
   const leftWall = Bodies.rectangle(
-    0,
+    -25,
     containerHeight / 2,
     50,
     containerHeight,
@@ -104,7 +119,7 @@
     }
   );
   const rightWall = Bodies.rectangle(
-    containerWidth,
+    containerWidth + 25,
     containerHeight / 2,
     50,
     containerHeight,
@@ -115,42 +130,41 @@
   );
 
   World.add(engine.world, [ground, ceiling, leftWall, rightWall]);
+  //   var newContainerWidth = matterContainer!.clientWidth;
+  //   var newContainerHeight = matterContainer!.clientHeight;
 
   function resizeWalls(matterContainer) {
-    var newContainerWidth = matterContainer.clientWidth;
-    var newContainerHeight = matterContainer.clientHeight;
+    // console.log(matterContainer!.clientWidth, matterContainer!.clientHeight);
 
-    render.canvas.width = newContainerWidth;
-    render.canvas.height = newContainerHeight;
+    render.canvas.width = matterContainer.clientWidth;
+    render.canvas.height = matterContainer.clientHeight;
+    // render.canvas.style.width = matterContainer.clientWidth + "px";
+    // render.canvas.style.height = matterContainer.clientHeight + "px";
 
     Matter.Body.setPosition(ground, {
-      x: newContainerWidth / 2,
-      y: newContainerHeight,
+      x: matterContainer.clientWidth / 2,
+      y: matterContainer.clientHeight,
     });
 
     Matter.Body.setPosition(ceiling, {
-      x: newContainerWidth / 2,
+      x: matterContainer.clientWidth / 2,
       y: 0,
     });
 
-    Matter.Body.scale(ground, newContainerWidth / containerWidth, 1);
-    Matter.Body.scale(ceiling, newContainerWidth / containerWidth, 1);
-
     Matter.Body.setPosition(leftWall, {
       x: 0,
-      y: newContainerHeight / 2,
+      y: matterContainer.clientHeight / 2,
     });
 
     Matter.Body.setPosition(rightWall, {
-      x: newContainerWidth,
-      y: newContainerHeight / 2,
+      x: matterContainer.clientWidth,
+      y: matterContainer.clientHeight / 2,
     });
     Matter.Body.setPosition(tbox, {
-      x: newContainerWidth / 2,
-      y: newContainerHeight / 2,
+      x: matterContainer.clientWidth / 2,
+      y: matterContainer.clientHeight / 3 / 2,
     });
-    containerWidth = newContainerWidth;
-    containerHeight = newContainerHeight;
+    Matter.Render.setPixelRatio(render, window.devicePixelRatio);
   }
 
   window.addEventListener("resize", () => resizeWalls(matterContainer!));
@@ -179,7 +193,7 @@
 
       // Apply repulsion force when the mouse is near the box
       if (distance < 100) {
-        const repulsionMagnitude = 0.0005;
+        const repulsionMagnitude = 0.0002;
         const repulsionX = -distanceX * repulsionMagnitude;
         const repulsionY = -distanceY * repulsionMagnitude;
 

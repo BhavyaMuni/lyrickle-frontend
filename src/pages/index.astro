@@ -1,5 +1,8 @@
 ---
 import MatterCanvas from "../components/MatterCanvas.astro";
+import Textbox from "@/components/Textbox.astro";
+import { Button } from "@/components/ui/button";
+import "@/styles/globals.css";
 ---
 
 <html lang="en">
@@ -11,18 +14,18 @@ import MatterCanvas from "../components/MatterCanvas.astro";
     <title>Astro</title>
   </head>
   <body>
-    <div class="h-screen w-full">
+    <div class="flex h-screen items-center justify-center relative">
       <MatterCanvas />
-      <div
-        class="absolute inset-0 flex flex-col z-0 justify-center items-center"
-      >
-        <p>Your Textbox Content</p>
-        <input
-          type="text"
-          class="text-center"
-          placeholder="Enter your text here"
-        />
-      </div>
+      <div class="absolute z-10">Hello</div>
+      <!-- <div class="absolute inset-0 col-start-1 row-start-1"> -->
+      <!-- <Textbox />
+        <Button>Submit</Button> -->
+      <!-- <input
+              type="text"
+              class="text-center"
+              placeholder="Enter your text here"
+            /> -->
+      <!-- </div> -->
     </div>
   </body>
 </html>

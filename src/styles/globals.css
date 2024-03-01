@@ -1,0 +1,11 @@
+@tailwind base; 
+@tailwind components;
+@tailwind utilities;
+
+#matter-container{
+    line-height: 0;
+}
+
+canvas{
+    width: 100%;
+}
