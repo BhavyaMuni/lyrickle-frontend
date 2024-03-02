@@ -9,30 +9,17 @@
 </div>
 
 <script>
-  import "pathseg";
-  import decomp from "poly-decomp";
-  import Matter, { Common } from "matter-js";
-  const {
-    Engine,
-    Render,
-    World,
-    Bodies,
-    Body,
-    Events,
-    Mouse,
-    MouseConstraint,
-    Svg,
-  } = Matter;
+  import Matter from "matter-js";
+  const { Engine, Render, World, Bodies, Body, Events, Mouse } = Matter;
 
   const engine = Engine.create({
     gravity: { scale: 0.0005 },
-
-    // enableSleeping: true,
   });
-  Common.setDecomp(decomp);
-  const matterContainer = document.getElementById("matter-container");
-  console.log(matterContainer!.clientWidth, matterContainer!.clientHeight);
-  const matterCanvas = document.getElementById("matter-canvas");
+
+  const matterContainer = document.getElementById("matter-container")!;
+  const matterCanvas = document.getElementById(
+    "matter-canvas"
+  ) as HTMLCanvasElement;
   var containerWidth = matterContainer!.clientWidth;
   var containerHeight = matterContainer!.clientHeight;
   const render = Render.create({
@@ -42,7 +29,6 @@
       pixelRatio: window.devicePixelRatio,
       showSleeping: false,
       wireframes: false,
-      showDebug: true,
       width: matterContainer.clientWidth,
       height: matterContainer.clientHeight,
       background: "transparent",
@@ -50,10 +36,10 @@
     },
   });
 
-  const boxes = [];
+  const bodies: Matter.Body[] = [];
 
   for (let i = 0; i < 250; i++) {
-    const newBox = Bodies.rectangle(
+    const newBody = Bodies.rectangle(
       Math.random() * containerWidth,
       Math.random() * containerHeight,
       containerHeight * 0.035,
@@ -77,10 +63,9 @@
         density: 0.003,
       }
     );
-    Body.rotate(newBox, Math.random() * Math.PI);
-    boxes.push(newBox);
+    Body.rotate(newBody, Math.random() * Math.PI);
+    bodies.push(newBody);
   }
-  //   const box = Bodies.rectangle(200, 200, 80, 80);
 
   const tbox = Bodies.rectangle(
     containerWidth / 2,
@@ -136,7 +121,7 @@
   //   var newContainerWidth = matterContainer!.clientWidth;
   //   var newContainerHeight = matterContainer!.clientHeight;
 
-  function resizeWalls(matterContainer) {
+  function resizeWalls(matterContainer: HTMLElement) {
     // console.log(matterContainer!.clientWidth, matterContainer!.clientHeight);
 
     render.canvas.width = matterContainer.clientWidth;
@@ -171,7 +156,7 @@
   }
 
   window.addEventListener("resize", () => resizeWalls(matterContainer!));
-  World.add(engine.world, boxes);
+  World.add(engine.world, bodies);
   // Create a mouse
   const mouse = Mouse.create(render.canvas);
   //   const mouseConstraint = MouseConstraint.create(engine, {
@@ -188,7 +173,7 @@
     const mouseX = mouse.position.x;
     const mouseY = mouse.position.y;
 
-    boxes.forEach((box) => {
+    bodies.forEach((box) => {
       const distanceX = mouseX - box.position.x;
       const distanceY = mouseY - box.position.y;
 
