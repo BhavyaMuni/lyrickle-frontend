@@ -3,6 +3,7 @@ import MatterCanvas from "../components/MatterCanvas.astro";
 import Textbox from "@/components/Textbox.astro";
 import { Button } from "@/components/ui/button";
 import "@/styles/globals.css";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 ---
 
 <html lang="en">
@@ -16,7 +17,9 @@ import "@/styles/globals.css";
   <body>
     <div class="flex h-screen items-center justify-center relative">
       <MatterCanvas />
-      <div class="absolute z-10">Hello</div>
+      <div class="absolute z-10 m-auto">
+        <Button client:visible variant="outline">Hello</Button>
+      </div>
       <!-- <div class="absolute inset-0 col-start-1 row-start-1"> -->
       <!-- <Textbox />
         <Button>Submit</Button> -->
