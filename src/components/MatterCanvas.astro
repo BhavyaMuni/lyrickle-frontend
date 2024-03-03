@@ -2,10 +2,7 @@
   class="bg-transparent w-full h-screen overflow-hidden"
   id="matter-container"
 >
-  <canvas
-    class="-z-10 min-w-full"
-    style="width: 1000px; height: 1000px;"
-    id="matter-canvas"></canvas>
+  <canvas class="-z-10 w-full" id="matter-canvas"></canvas>
 </div>
 
 <script>
@@ -20,8 +17,8 @@
   const matterCanvas = document.getElementById(
     "matter-canvas"
   ) as HTMLCanvasElement;
-  var containerWidth = matterContainer!.clientWidth;
-  var containerHeight = matterContainer!.clientHeight;
+  var containerWidth = matterContainer?.clientWidth;
+  var containerHeight = matterContainer?.clientHeight;
   const render = Render.create({
     canvas: matterCanvas,
     engine: engine,
@@ -124,10 +121,10 @@
   function resizeWalls(matterContainer: HTMLElement) {
     // console.log(matterContainer!.clientWidth, matterContainer!.clientHeight);
 
+    render.options.width = matterContainer.clientWidth;
+    render.options.height = matterContainer.clientHeight;
     render.canvas.width = matterContainer.clientWidth;
     render.canvas.height = matterContainer.clientHeight;
-    // render.canvas.style.width = matterContainer.clientWidth + "px";
-    // render.canvas.style.height = matterContainer.clientHeight + "px";
 
     Matter.Body.setPosition(ground, {
       x: matterContainer.clientWidth / 2,
@@ -140,12 +137,12 @@
     });
 
     Matter.Body.setPosition(leftWall, {
-      x: 0,
+      x: -25,
       y: matterContainer.clientHeight / 2,
     });
 
     Matter.Body.setPosition(rightWall, {
-      x: matterContainer.clientWidth,
+      x: matterContainer.clientWidth + 25,
       y: matterContainer.clientHeight / 2,
     });
     Matter.Body.setPosition(tbox, {

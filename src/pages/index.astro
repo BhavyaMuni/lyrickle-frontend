@@ -1,9 +1,7 @@
 ---
 import MatterCanvas from "../components/MatterCanvas.astro";
-import Textbox from "@/components/Textbox.astro";
-import { Button } from "@/components/ui/button";
+import GenerationForm from "../components/GenerationForm.tsx";
 import "@/styles/globals.css";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 ---
 
 <html lang="en">
@@ -12,23 +10,26 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
+    <title>lyrickle</title>
   </head>
   <body>
     <div class="flex h-screen items-center justify-center relative">
       <MatterCanvas />
-      <div class="absolute z-10 m-auto">
-        <Button client:visible variant="outline">Hello</Button>
+      <div
+        class="container absolute z-10 max-w-2xl w-4/5 mx-auto flex flex-col justify-center"
+      >
+        <h1 class="tscroll-m-20 text-4xl font-bold tracking-tight lg:text-5xl">
+          Lyrickle
+        </h1>
+        <p class="leading-7 [&:not(:first-child)]:mt-6">
+          Make your favourite artists write a song for you!
+        </p>
+        <!-- <p class="text-center">Select artist</p> -->
+        <GenerationForm client:only="react" />
       </div>
-      <!-- <div class="absolute inset-0 col-start-1 row-start-1"> -->
-      <!-- <Textbox />
-        <Button>Submit</Button> -->
-      <!-- <input
-              type="text"
-              class="text-center"
-              placeholder="Enter your text here"
-            /> -->
-      <!-- </div> -->
+      <!-- <div class="absolute z-10 conatiner">
+        <Button client:visible variant="outline">Hello</Button>
+      </div> -->
     </div>
   </body>
 </html>
