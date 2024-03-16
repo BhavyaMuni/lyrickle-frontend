@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Form,
@@ -27,9 +27,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
+import { useEffect, useState } from "react";
 
 const formSchema = z.object({
   artist: z.string().min(2).max(50),
+  prompt: z.string().min(2),
 });
 const artists = [
   {
@@ -43,15 +46,38 @@ const GenerationForm = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       artist: "",
+      prompt: "",
     },
   });
+  const [song, setSong] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+    setLoading(true);
+
+    const response = await fetch(
+      `https://bhavyamuni-lirics.hf.space/${values.artist}?` +
+        new URLSearchParams({
+          query: values.prompt,
+        }),
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    ).catch((error) => console.error("Error fetching data:", error));
+    const data = await response?.json();
+    setSong(data?.output);
   }
+
+  useEffect(() => {
+    form.setValue("prompt", song);
+    setLoading(false);
+  }, [song]);
 
   return (
     <Form {...form}>
@@ -108,13 +134,39 @@ const GenerationForm = () => {
                   </Command>
                 </PopoverContent>
               </Popover>
-              {/* <FormDescription></FormDescription> */}
               <FormMessage />
             </FormItem>
           )}
         />
-
-        <Button type="submit">Submit</Button>
+        <FormField
+          control={form.control}
+          name="prompt"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Prompt</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Write the start of your new song..."
+                  className="h-32"
+                  disabled={loading}
+                  {...field}
+                />
+              </FormControl>
+              {/* <FormDescription>
+                You can <span>@mention</span> other users and organizations.
+              </FormDescription> */}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {!loading ? (
+          <Button type="submit">Generate</Button>
+        ) : (
+          <Button disabled>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Generating...
+          </Button>
+        )}
       </form>
     </Form>
   );

@@ -13,23 +13,21 @@ import "@/styles/globals.css";
     <title>lyrickle</title>
   </head>
   <body>
-    <div class="flex h-screen items-center justify-center relative">
+    <div class="relative flex h-screen items-center justify-center">
       <MatterCanvas />
       <div
-        class="container absolute z-10 max-w-2xl w-4/5 mx-auto flex flex-col justify-center"
+        class="container absolute z-10 mx-auto flex w-4/5 max-w-2xl flex-col justify-center"
       >
-        <h1 class="tscroll-m-20 text-4xl font-bold tracking-tight lg:text-5xl">
+        <h1
+          class="tracking-relaxed scroll-m-20 font-serif text-4xl font-bold lg:text-5xl"
+        >
           Lyrickle
         </h1>
         <p class="leading-7 [&:not(:first-child)]:mt-6">
           Make your favourite artists write a song for you!
         </p>
-        <!-- <p class="text-center">Select artist</p> -->
         <GenerationForm client:only="react" />
       </div>
-      <!-- <div class="absolute z-10 conatiner">
-        <Button client:visible variant="outline">Hello</Button>
-      </div> -->
     </div>
   </body>
 </html>

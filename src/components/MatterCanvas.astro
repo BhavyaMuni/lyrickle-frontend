@@ -12,6 +12,7 @@
   const engine = Engine.create({
     gravity: { scale: 0.0005 },
   });
+  const repulsionMagnitude = 0.0002;
 
   const matterContainer = document.getElementById("matter-container")!;
   const matterCanvas = document.getElementById(
@@ -115,12 +116,8 @@
   );
 
   World.add(engine.world, [ground, ceiling, leftWall, rightWall]);
-  //   var newContainerWidth = matterContainer!.clientWidth;
-  //   var newContainerHeight = matterContainer!.clientHeight;
 
   function resizeWalls(matterContainer: HTMLElement) {
-    // console.log(matterContainer!.clientWidth, matterContainer!.clientHeight);
-
     render.options.width = matterContainer.clientWidth;
     render.options.height = matterContainer.clientHeight;
     render.canvas.width = matterContainer.clientWidth;
@@ -145,6 +142,7 @@
       x: matterContainer.clientWidth + 25,
       y: matterContainer.clientHeight / 2,
     });
+
     Matter.Body.setPosition(tbox, {
       x: matterContainer.clientWidth / 2,
       y: matterContainer.clientHeight / 3 / 2,
@@ -154,16 +152,9 @@
 
   window.addEventListener("resize", () => resizeWalls(matterContainer!));
   World.add(engine.world, bodies);
+
   // Create a mouse
   const mouse = Mouse.create(render.canvas);
-  //   const mouseConstraint = MouseConstraint.create(engine, {
-  //     mouse: mouse,
-  //     constraint: {
-  //       render: { visible: false },
-  //     },
-  //   });
-
-  //   World.add(engine.world, mouseConstraint);
 
   // Listen for mouse movements
   Events.on(engine, "beforeUpdate", () => {
@@ -178,7 +169,6 @@
 
       // Apply repulsion force when the mouse is near the box
       if (distance < 100) {
-        const repulsionMagnitude = 0.0002;
         const repulsionX = -distanceX * repulsionMagnitude;
         const repulsionY = -distanceY * repulsionMagnitude;
 
