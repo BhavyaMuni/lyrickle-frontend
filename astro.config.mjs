@@ -16,6 +16,6 @@ export default defineConfig({
     ,
     react(),
   ],
-  output: "server",
+  output: "hybrid",
   adapter: vercel({ webAnalytics: { enabled: true } }),
 });
