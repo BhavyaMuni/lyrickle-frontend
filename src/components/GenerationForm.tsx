@@ -41,7 +41,6 @@ const artists = [
   },
 ] as const;
 const GenerationForm = () => {
-  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -52,31 +51,37 @@ const GenerationForm = () => {
   const [song, setSong] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     setLoading(true);
 
     const response = await fetch(
-      `https://bhavyamuni-lirics.hf.space/${values.artist}?` +
+      `http://localhost:8000/${values.artist}?` +
         new URLSearchParams({
-          query: values.prompt,
+          prompt: values.prompt,
         }),
       {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
       }
     ).catch((error) => console.error("Error fetching data:", error));
-    const data = await response?.json();
-    setSong(data?.output);
+    // const data = await response?.json();
+    // Here we start prepping for the streaming response
+    const reader = response?.body?.getReader();
+    const decoder = new TextDecoder();
+    while (true) {
+      // Here we start reading the stream, until its done.
+      const { value, done } = await reader!.read();
+      if (done) {
+        break;
+      }
+      const decodedChunk = decoder.decode(value, { stream: true });
+      const newChunk = JSON.parse(decodedChunk).text;
+      setSong((text) => text + newChunk); // update state with new chunk
+    }
+    setLoading(false);
   }
 
   useEffect(() => {
     form.setValue("prompt", song);
-    setLoading(false);
   }, [song]);
 
   return (
