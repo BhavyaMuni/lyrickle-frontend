@@ -55,7 +55,7 @@ const GenerationForm = () => {
     setLoading(true);
 
     const response = await fetch(
-      `http://localhost:8000/${values.artist}?` +
+      `https://bhavyamuni-lirics.hf.space/${values.artist}?` +
         new URLSearchParams({
           prompt: values.prompt,
         }),
