@@ -71,13 +71,13 @@ const GenerationForm = () => {
       // Here we start reading the stream, until its done.
       const { value, done } = await reader!.read();
       if (done) {
+        setLoading(false);
         break;
       }
       const decodedChunk = decoder.decode(value, { stream: true });
-      const newChunk = JSON.parse(decodedChunk).text;
+      const newChunk = JSON.parse(decodedChunk || "").text;
       setSong((text) => text + newChunk); // update state with new chunk
     }
-    setLoading(false);
   }
 
   useEffect(() => {
