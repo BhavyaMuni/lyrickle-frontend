@@ -61,6 +61,9 @@ const GenerationForm = () => {
         }),
       {
         method: "GET",
+        headers: {
+          "Content-Type": "text/plain",
+        },
       }
     ).catch((error) => console.error("Error fetching data:", error));
     // const data = await response?.json();
@@ -76,7 +79,7 @@ const GenerationForm = () => {
       }
       const decodedChunk = decoder.decode(value, { stream: true });
 
-      const newChunk = JSON.parse(JSON.stringify(decodedChunk) || "").text;
+      const newChunk = decodedChunk;
       setSong((text) => text + newChunk); // update state with new chunk
     }
   }
