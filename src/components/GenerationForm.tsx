@@ -75,7 +75,8 @@ const GenerationForm = () => {
         break;
       }
       const decodedChunk = decoder.decode(value, { stream: true });
-      const newChunk = JSON.parse(decodedChunk || "").text;
+
+      const newChunk = JSON.parse(JSON.stringify(decodedChunk) || "").text;
       setSong((text) => text + newChunk); // update state with new chunk
     }
   }
